@@ -1,17 +1,26 @@
 from django.contrib.auth import authenticate, login
-
-from .serializers import RegistrationSerializer , AssignmentSerializer
-from doc_app.models import Assignment , CustomUser
+from .serializers import RegistrationSerializer, AssignmentSerializer
+from doc_app.models import Assignment, CustomUser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.db import IntegrityError
+from rest_framework.permissions import IsAuthenticated
+# from rest_framework.decorators import permission_classes
+from django.middleware.csrf import get_token
+User = get_user_model()
 
-@csrf_exempt
+@api_view(['GET'])
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    return Response({'csrfToken': csrf_token})
+
+
 @api_view(['POST'])
+@csrf_protect
+@ensure_csrf_cookie
 def custom_auth_token(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -33,10 +42,8 @@ def custom_auth_token(request):
         # Return error if authentication fails
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-User = get_user_model()
-
-@csrf_exempt
 @api_view(['POST'])
+@ensure_csrf_cookie
 def registration_view(request):
     serializer = RegistrationSerializer(data=request.data)
     data = {}
@@ -52,11 +59,8 @@ def registration_view(request):
         data = serializer.errors
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-
-#view to create assignemnt 
-
-@csrf_exempt
 @api_view(['POST'])
+@ensure_csrf_cookie
 def create_assignment(request):
     try:
         serializer = AssignmentSerializer(data=request.data)
@@ -64,13 +68,13 @@ def create_assignment(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except IntegrityError as e:
+        return Response({'error': 'IntegrityError: ' + str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'Exception: ' + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-#view to get all the assignments
-@csrf_exempt
 @api_view(['GET'])
+@ensure_csrf_cookie
 def get_assignments(request):
     try:
         assignments = Assignment.objects.all()
@@ -79,10 +83,8 @@ def get_assignments(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-#view to get the assignment by id
-@csrf_exempt
 @api_view(['GET'])
+@ensure_csrf_cookie
 def get_assignment(request, pk):
     try:
         assignment = Assignment.objects.get(pk=pk)

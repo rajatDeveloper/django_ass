@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 def validate_file_extension(value):
     """Validator to ensure file extension is one of the allowed types. I have allowed pdf also """
     
-    if not value.name.endswith(('.pptx', '.docx', '.xlsx' , '.pdf')):
+    if not value.name.endswith(('.pptx', '.docx', '.xlsx' ,'.pdf')):
         raise ValidationError('File type is not allowed. Only pptx, docx, and xlsx are accepted.')
 
 class Assignment(models.Model):

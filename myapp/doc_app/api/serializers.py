@@ -6,7 +6,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Assignment
-        fields = ['id', 'doc']  # Include 'id' to help with retrieval
+        #doc url 
+        
+        fields = '__all__' # Include 'id' to help with retrieval
 
     def validate_doc(self, value):
         # Validate the file extension
@@ -15,7 +17,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('File type is not allowed. Only pptx, docx, xlsx, and pdf are accepted.')
         return value
     
-    from rest_framework import serializers
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
