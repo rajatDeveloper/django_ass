@@ -35,7 +35,7 @@ def custom_auth_token(request):
 
 User = get_user_model()
 
-
+@csrf_exempt
 @api_view(['POST'])
 def registration_view(request):
     serializer = RegistrationSerializer(data=request.data)
@@ -55,7 +55,7 @@ def registration_view(request):
 
 #view to create assignemnt 
 
-
+@csrf_exempt
 @api_view(['POST'])
 def create_assignment(request):
     try:
@@ -69,6 +69,7 @@ def create_assignment(request):
 
 
 #view to get all the assignments
+@csrf_exempt
 @api_view(['GET'])
 def get_assignments(request):
     try:
@@ -80,7 +81,7 @@ def get_assignments(request):
 
 
 #view to get the assignment by id
-
+@csrf_exempt
 @api_view(['GET'])
 def get_assignment(request, pk):
     try:
