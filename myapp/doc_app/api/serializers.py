@@ -3,6 +3,7 @@ from doc_app.models import Assignment
 from doc_app.models import CustomUser
 
 class AssignmentSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Assignment
         fields = ['id', 'doc']  # Include 'id' to help with retrieval
@@ -14,7 +15,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('File type is not allowed. Only pptx, docx, xlsx, and pdf are accepted.')
         return value
     
-
     from rest_framework import serializers
 
 

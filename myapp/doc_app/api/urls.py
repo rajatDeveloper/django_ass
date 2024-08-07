@@ -11,5 +11,4 @@ urlpatterns = [
     path('get_assignments/', get_assignments, name='get_assignments'),
     path('get_assignment/<int:pk>', get_assignment, name='get_assignment'),
 
-
 ]
